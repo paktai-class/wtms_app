@@ -20,7 +20,7 @@ This is a mobile application developed using **Flutter**, with a **PHP & MySQL**
 - SharedPreferences (Session management)
 - HTTP package (API calls)
 
-## 🛠 How to Run
+## How to Run
 
 ### 1. Backend Setup (XAMPP)
 - Start Apache and MySQL in XAMPP
