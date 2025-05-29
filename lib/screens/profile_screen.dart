@@ -36,7 +36,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (worker == null) return Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (worker == null) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text("Worker Profile")),
@@ -50,7 +52,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text("Phone: ${worker!['phone']}"),
             Text("Address: ${worker!['address']}"),
             SizedBox(height: 20),
-            ElevatedButton(onPressed: _logout, child: Text("Logout")),
+            ElevatedButton(
+              onPressed: _logout,
+              child: Text("Logout"),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => Navigator.pushNamed(context, "/tasks"),
+              child: Text("View My Tasks"),
+            ),
           ],
         ),
       ),
