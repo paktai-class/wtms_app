@@ -11,6 +11,13 @@ This is a mobile application developed using **Flutter**, with a **PHP & MySQL**
 - Data stored in MySQL
 - Backend written in PHP
 - Session saved using SharedPreferences
+- Register & login worker accounts
+- View assigned tasks
+- Submit task reports (1 per task)
+- View submission history
+- Edit previous reports
+- View & update worker profile
+- Navigation via BottomNavigationBar
 
 ## Technologies Used
 
@@ -36,9 +43,10 @@ This is a mobile application developed using **Flutter**, with a **PHP & MySQL**
 
 ## YouTube Demo
 
-📺 Watch the demo here: [Your YouTube Demo Link](https://youtu.be/YydSPICrjWw)
-🔗 Watch the 2nd phase demo here(https://youtu.be/qFwuDfw0aK0)
+📺 Watch the demo here: (https://youtu.be/YydSPICrjWw)
+🔗 Watch the 2nd phase demo here: (https://youtu.be/qFwuDfw0aK0)
+🔗 Watch the FINAL phase demo here: (https://youtu.be/EqHbtsQvqZE)
+
 
 ## Author
-
 MUHAMMAD UMAIR BIN NORAZLAN (297248) – STIWK2114 Lab Assignment 2 – A242

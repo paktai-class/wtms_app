@@ -6,12 +6,12 @@ class SubmitReportScreen extends StatefulWidget {
   const SubmitReportScreen({Key? key}) : super(key: key);
 
   @override
-  SubmitReportScreenState createState() => SubmitReportScreenState();
+  State<SubmitReportScreen> createState() => _SubmitReportScreenState();
 }
 
-class SubmitReportScreenState extends State<SubmitReportScreen> {
+class _SubmitReportScreenState extends State<SubmitReportScreen> {
   final TextEditingController _reportController = TextEditingController();
-  Map<String, dynamic>? task;
+  late Map<String, dynamic> task;
   int? workerId;
 
   @override
@@ -25,56 +25,101 @@ class SubmitReportScreenState extends State<SubmitReportScreen> {
   }
 
   Future<void> _submitReport() async {
-    if (_reportController.text.isEmpty || task == null || workerId == null) return;
+    final reportText = _reportController.text.trim();
+    if (reportText.isEmpty) {
+      _showDialog("Warning", "Please enter a report.");
+      return;
+    }
 
     final response = await http.post(
       Uri.parse("http://10.0.2.2/wtms_api/submit_work.php"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "worker_id": workerId,
-        "work_id": task!['work_id'],
-        "report": _reportController.text,
+        "work_id": task['work_id'],
+        "report": reportText,
       }),
     );
 
-    if (response.statusCode == 200 && jsonDecode(response.body)['success']) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Report submitted successfully")));
-      Navigator.pop(context); // Go back to task list
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Submission failed")));
-    }
+    final success = response.statusCode == 200 && jsonDecode(response.body)['success'];
+
+    _showDialog(
+      success ? "Success" : "Failed",
+      success ? "Report submitted successfully." : "Failed to submit report.",
+      onClose: () {
+        if (success) Navigator.pop(context); // Close screen
+      },
+    );
+  }
+
+  void _showDialog(String title, String message, {VoidCallback? onClose}) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            child: Text("OK"),
+            onPressed: () {
+              Navigator.pop(context);
+              if (onClose != null) onClose();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (task == null) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
-      appBar: AppBar(title: Text("Submit Report")),
+      backgroundColor: Colors.purple.shade100,
+      appBar: AppBar(
+        title: Text("Submit Report"),
+        backgroundColor: Colors.deepPurple,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Task: ${task!['title']}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text("Deadline: ${task!['deadline']}"),
-            SizedBox(height: 16),
-            TextField(
-              controller: _reportController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                labelText: "Write your report here...",
-                border: OutlineInputBorder(),
+            Card(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 4,
+              child: ListTile(
+                title: Text(task['title'], style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text("Deadline: ${task['deadline']}"),
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
+            Card(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: TextField(
+                  controller: _reportController,
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    labelText: "Enter your report",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: Icon(Icons.send),
+              label: Text("Submit Report"),
               onPressed: _submitReport,
-              child: Text("Submit"),
-              style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
             ),
           ],
         ),
